@@ -1,0 +1,80 @@
+---
+title: "Jon_Assignment4"
+output: html_notebook
+---
+
+## Q1. Project & Notebook Creation: Jon_Assignment4
+
+## Q2. Loading Packages
+```{r}
+library(ggthemes)
+library(tidyverse)
+```
+
+## Q3. Importing Data: "assingmnet4"
+
+## Q4. Rows and Columns
+```{r}
+nrow(assignment4)
+ncol(assignment4)
+```
+### The data file has 3700 rows and 12 columns.
+
+## Q5. Unique Participants & Trials 
+```{r}
+assignment4 %>% pull(subject) %>% unique()
+assignment4 %>% group_by(subject) %>% count()
+```
+### The file has 37 unique subjects. Each subject did 100 trials.
+
+## Q6. Levels of Variables
+```{r}
+assignment4=assignment4 %>% mutate(prime_condition=as.factor(prime_condition), state=as.factor(state))
+
+levels(assignment4 %>% pull(prime_condition))
+levels(assignment4 %>% pull(state))
+```
+### prime_condition and state both have 4 levels each. 
+
+## Q7. Subset of Columns
+```{r}
+prime_information= assignment4 %>% select(subject, prime_condition)
+```
+
+## Q8. Subset of Rows
+```{r}
+phonological=assignment4 %>% filter(prime_condition=="phonological" & accuracy==1)
+```
+
+## Q9. Summarizing Accuracy per Subject
+```{r}
+subject_acc=assignment4 %>% group_by(subject) %>% summarise(mean_accuracy=mean(accuracy))
+```
+
+## Q10. Summarizing Accuracy per Prime Condition
+```{r}
+prime_acc=assignment4 %>% group_by(prime_condition) %>% summarise(mean_primeAcc=mean(accuracy), SD_primeAcc=sd(accuracy))
+```
+
+## Q11. Histogram of Subject Accuracy
+```{r}
+subject_acc %>% ggplot(aes(x=mean_accuracy))+geom_histogram(binwidth = 0.2, fill="darkgoldenrod4", color="black")+labs(x="mean accuracy",y="count",title="Histogram of mean accuracy")
+```
+
+## Q12. Bar Plot of Prime Condition
+```{r}
+prime_acc %>% ggplot(aes(x=prime_condition, y=mean_primeAcc))+geom_col(fill="pink",color="darkslategray")+theme_economist()+labs(x="prime condition",y="mean accuracy",title="Mean accuracy across prime condition")
+```
+
+## Q13. Data Interpretation
+## Phonological primeing seems to have an effect in increasing accuracy during the trivia experiment, as its mean accuracy appears significantly higher than the 3 other conditions. Semantic priming may have hindered accuracy--its mean accuracy seems to be lower than all the others. Mean accuracies for "both" and "unrelated" are not significantly different from eachother. 
+
+## Q14. Summarizing Accuracy per Prime Condition and State
+```{r}
+state_prime_acc=assignment4 %>% group_by(state, prime_condition) %>% summarise(mean_stateXprime=mean(accuracy))
+```
+
+## Q15. Bar Plot of Prime Condition and State
+```{r}
+state_prime_acc %>% ggplot(aes(x=prime_condition,y=mean_stateXprime, fill=state))+geom_col(position="dodge")+theme_fivethirtyeight()+labs(x="prime condition",y="mean accuracy",title="Mean accuracy across prime condition & reported states")
+```
